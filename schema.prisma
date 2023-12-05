@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
+}
+
+// Models
+model User {
+  id             String  @id @default(uuid())
+  username       String  @unique
+  password       String //handle in app services! may not contain spaces and shold be a stinrg
+  name           String //handle in app services! may not contain special charachters such as !"#¤%&&/()=?"
+  email          String //handle in app services! shold contain one @ and one . and no special Charachters
+  phoneNumber    String //handle in app services! set specefic format
+  profilePicture String? //handle in app services! should be a link so no spaces
+
+  reviews  Review[]
+  bookings Booking[]
+}
+
+model Review {
+  id         String  @id @default(uuid())
+  userId     String
+  propertyId String
+  rating     Int //handle in app services! should be between 0 and 5.
+  comment    String? //handle in app services! Should be limited to 500 charachters
+
+  reveiwCreator    User     @relation(fields: [userId], references: [id])
+  reviewedProperty Property @relation(fields: [propertyId], references: [id])
+
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Booking {
+  id             String        @id @default(uuid())
+  userId         String
+  propertyId     String
+  createdAt      DateTime      @default(now())
+  checkinDate    DateTime //handle in app services! set specefic date format.
+  checkoutDate   DateTime //handle in app services! set specefic date format.
+  numberOfGuests Int
+  totalPrice     Int // Question! Should this not be a Float or Decimal?
+  bookingStatus  BookingStatus @default(DRAFT)
+
+  bookingCreator User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bookedProperty Property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([userId])
+  @@index([propertyId])
+}
+
+model Host {
+  id             String  @id @default(uuid())
+  username       String  @unique
+  password       String //handle in app services! may not contain spaces and shold be a stinrg
+  name           String //handle in app services! may not contain special charachters such as !"#¤%&&/()=?"
+  email          String //handle in app services! shold contain one @ and one . and no special Charachters
+  phoneNumber    String //handle in app services! set specefic format
+  ProfilePicture String? //handle in app services! should be a link so no spaces
+  aboutMe        String? //handle in app services! Should be limited to 5000 charachters
+
+  listings Property[]
+}
+
+model Property {
+  id            String   @id @default(uuid())
+  hostId        String
+  title         String //handle in app services! Should be limited to 200 charachters
+  description   String //handle in app services! Should be limited to 5000 charachters
+  location      String //handle in app services! Should be limited to 100 charachters
+  pricePerNight Decimal
+  bedroomCount  Int
+  bathRoomCount Int
+  maxGuestCount Int
+  rating        Int //Question! is this the average rating? if so should it then not be an array so the average can be calculated in the service?
+  updatedAt     DateTime @updatedAt
+
+  amenities Amenity[]
+  Host      Host      @relation(fields: [hostId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bookings  Booking[]
+  reviews   Review[]
+
+  @@index([hostId])
+}
+
+model Amenity {
+  id       String     @id @default(uuid())
+  name     String //handle in app services! Should be limited to 100 charachters
+  listings Property[]
+}
+
+enum BookingStatus {
+  DRAFT
+  REQUESTED
+  PENDING
+  CONFIRMED
+}
+
+// # Questions!
+// - On line 50: Should this not be a Float or Decimal? in general a price can have comma values and if this is calculated from the pricePerNIght in the property table i guess it shold be Decimal
+// - On line 51: Enums was not covered in the course but could they not be a good idea to use here or is it better to just handle the limitation of input in the service.
+// - On line 83 is this the average rating? if so should it then not be an array so the average can be calculated in the service?
