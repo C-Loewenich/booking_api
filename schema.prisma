@@ -15,11 +15,11 @@ datasource db {
 model User {
   id             String  @id @default(uuid())
   username       String  @unique
-  password       String //handle in app services! may not contain spaces and shold be a stinrg
-  name           String //handle in app services! may not contain special charachters such as !"#¤%&&/()=?"
-  email          String //handle in app services! shold contain one @ and one . and no special Charachters
-  phoneNumber    String //handle in app services! set specefic format
-  profilePicture String? //handle in app services! should be a link so no spaces
+  password       String //handle in app middleware! may not contain spaces and shold be a stinrg
+  name           String //handle in app middleware! may not contain special charachters such as !"#¤%&&/()=?"
+  email          String //handle in app middleware! shold contain one @ and one . and no special Charachters
+  phoneNumber    String //handle in app middleware! set specefic format
+  profilePicture String? //handle in app middleware! should be a link so no spaces
 
   reviews  Review[]
   bookings Booking[]
@@ -29,8 +29,8 @@ model Review {
   id         String  @id @default(uuid())
   userId     String
   propertyId String
-  rating     Int //handle in app services! should be between 0 and 5.
-  comment    String? //handle in app services! Should be limited to 500 charachters
+  rating     Int //handle in app middleware! should be between 0 and 5.
+  comment    String? //handle in app middleware! Should be limited to 500 charachters
 
   reveiwCreator    User     @relation(fields: [userId], references: [id])
   reviewedProperty Property @relation(fields: [propertyId], references: [id])
@@ -44,8 +44,8 @@ model Booking {
   userId         String
   propertyId     String
   createdAt      DateTime      @default(now())
-  checkinDate    DateTime //handle in app services! set specefic date format.
-  checkoutDate   DateTime //handle in app services! set specefic date format.
+  checkinDate    DateTime //handle in app middleware! set specefic date format.
+  checkoutDate   DateTime //handle in app middleware! set specefic date format.
   numberOfGuests Int
   totalPrice     Int // Question! Should this not be a Float or Decimal?
   bookingStatus  BookingStatus @default(DRAFT)
@@ -60,12 +60,12 @@ model Booking {
 model Host {
   id             String  @id @default(uuid())
   username       String  @unique
-  password       String //handle in app services! may not contain spaces and shold be a stinrg
-  name           String //handle in app services! may not contain special charachters such as !"#¤%&&/()=?"
-  email          String //handle in app services! shold contain one @ and one . and no special Charachters
-  phoneNumber    String //handle in app services! set specefic format
-  ProfilePicture String? //handle in app services! should be a link so no spaces
-  aboutMe        String? //handle in app services! Should be limited to 5000 charachters
+  password       String //handle in app middleware! may not contain spaces and shold be a stinrg
+  name           String //handle in app middleware! may not contain special charachters such as !"#¤%&&/()=?"
+  email          String //handle in app middleware! shold contain one @ and one . and no special Charachters
+  phoneNumber    String //handle in app middleware! set specefic format
+  ProfilePicture String? //handle in app middleware! should be a link so no spaces
+  aboutMe        String? //handle in app middleware! Should be limited to 5000 charachters
 
   listings Property[]
 }
@@ -73,9 +73,9 @@ model Host {
 model Property {
   id            String   @id @default(uuid())
   hostId        String
-  title         String //handle in app services! Should be limited to 200 charachters
-  description   String //handle in app services! Should be limited to 5000 charachters
-  location      String //handle in app services! Should be limited to 100 charachters
+  title         String //handle in app middleware! Should be limited to 200 charachters
+  description   String //handle in app middleware! Should be limited to 5000 charachters
+  location      String //handle in app middleware! Should be limited to 100 charachters
   pricePerNight Decimal
   bedroomCount  Int
   bathRoomCount Int
@@ -93,7 +93,7 @@ model Property {
 
 model Amenity {
   id       String     @id @default(uuid())
-  name     String //handle in app services! Should be limited to 100 charachters
+  name     String //handle in app middleware! Should be limited to 100 charachters
   listings Property[]
 }
 
