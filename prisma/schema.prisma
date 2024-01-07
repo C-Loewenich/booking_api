@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -15,11 +12,11 @@ datasource db {
 model User {
   id             String  @id @default(uuid())
   username       String  @unique
-  password       String //handle in app middleware! may not contain spaces and shold be a stinrg
-  name           String //handle in app middleware! may not contain special charachters such as !"#¤%&&/()=?"
-  email          String //handle in app middleware! shold contain one @ and one . and no special Charachters
-  phoneNumber    String //handle in app middleware! set specefic format
-  profilePicture String? //handle in app middleware! should be a link so no spaces
+  password       String
+  name           String  @db.VarChar(50)
+  email          String  @unique @db.VarChar(50)
+  phoneNumber    String  @db.VarChar(20)
+  profilePicture String?
 
   reviews  Review[]
   bookings Booking[]
@@ -29,8 +26,8 @@ model Review {
   id         String  @id @default(uuid())
   userId     String
   propertyId String
-  rating     Int //handle in app middleware! should be between 0 and 5.
-  comment    String? //handle in app middleware! Should be limited to 500 charachters
+  rating     Int
+  comment    String? @db.VarChar(1000)
 
   reviewCreator    User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   reviewedProperty Property @relation(fields: [propertyId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -44,10 +41,10 @@ model Booking {
   userId         String
   propertyId     String
   createdAt      DateTime      @default(now())
-  checkinDate    DateTime //handle in app middleware! set specefic date format.
-  checkoutDate   DateTime //handle in app middleware! set specefic date format.
+  checkinDate    DateTime
+  checkoutDate   DateTime
   numberOfGuests Int
-  totalPrice     Float // Question! Should this not be a Float or Decimal?
+  totalPrice     Decimal       @db.Decimal(10, 2)
   bookingStatus  BookingStatus @default(pending)
 
   bookingCreator User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
@@ -60,12 +57,12 @@ model Booking {
 model Host {
   id             String  @id @default(uuid())
   username       String  @unique
-  password       String //handle in app middleware! may not contain spaces and shold be a stinrg
-  name           String //handle in app middleware! may not contain special charachters such as !"#¤%&&/()=?"
-  email          String //handle in app middleware! shold contain one @ and one . and no special Charachters
-  phoneNumber    String //handle in app middleware! set specefic format
-  profilePicture String? //handle in app middleware! should be a link so no spaces
-  aboutMe        String? //handle in app middleware! Should be limited to 5000 charachters
+  password       String
+  name           String  @db.VarChar(50)
+  email          String  @unique @db.VarChar(50)
+  phoneNumber    String  @db.VarChar(20)
+  profilePicture String?
+  aboutMe        String? @db.VarChar(5000)
 
   listings Property[]
 }
@@ -73,14 +70,14 @@ model Host {
 model Property {
   id            String   @id @default(uuid())
   hostId        String
-  title         String //handle in app middleware! Should be limited to 200 charachters
-  description   String //handle in app middleware! Should be limited to 5000 charachters
-  location      String //handle in app middleware! Should be limited to 100 charachters
-  pricePerNight Decimal
+  title         String   @db.VarChar(200)
+  description   String   @db.VarChar(5000)
+  location      String   @db.VarChar(50)
+  pricePerNight Decimal  @db.Decimal(10, 2)
   bedroomCount  Int
   bathRoomCount Int
   maxGuestCount Int
-  rating        Int //Question! is this the average rating? if so should it then not be an array so the average can be calculated in the service?
+  rating        Int //I have decided here to calculate the average in stead of just passing a value even thoug this was not required, have however left rating in the schema in order to fulfill the test.
   updatedAt     DateTime @updatedAt
 
   amenities Amenity[]
@@ -93,7 +90,7 @@ model Property {
 
 model Amenity {
   id       String     @id @default(uuid())
-  name     String //handle in app middleware! Should be limited to 100 charachters
+  name     String     @db.VarChar(50)
   listings Property[]
 }
 
@@ -101,9 +98,5 @@ enum BookingStatus {
   confirmed
   pending
   canceled
+  updated
 }
-
-// # Questions!
-// - On line 50: Should this not be a Float or Decimal? in general a price can have comma values and if this is calculated from the pricePerNIght in the property table i guess it shold be Decimal
-// - On line 51: Enums was not covered in the course but could they not be a good idea to use here or is it better to just handle the limitation of input in the service.
-// - On line 83 is this the average rating? if so should it then not be an array so the average can be calculated in the service?

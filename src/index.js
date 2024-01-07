@@ -4,7 +4,13 @@ import "dotenv/config";
 
 import log from "../src/middleware/logMiddleware.js";
 import errorHandler from "./middleware/errorHandler.js"
+import loginRouter from "./routes/login.js";
 import amenitiesRouter from "./routes/amenities.js";
+import usersRouter from "./routes/users.js";
+import bookingsRouter from "./routes/bookings.js";
+import hostRouter from "./routes/hosts.js";
+import propertiesRouter from "./routes/properties.js";
+import reviewsRouter from "./routes/reviews.js";
 
 const app = express();
 
@@ -33,7 +39,15 @@ app.use(express.json());
 app.use(log);
 
 // Resource routes
+app.use("/login", loginRouter);
 app.use("/amenities", amenitiesRouter);
+app.use("/users", usersRouter);
+app.use("/bookings", bookingsRouter);
+app.use("/hosts", hostRouter);
+app.use("/properties", propertiesRouter);
+app.use("/reviews", reviewsRouter);
+
+
 // Trace errors
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());

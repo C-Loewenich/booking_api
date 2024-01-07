@@ -16,7 +16,6 @@ async function main () {
     const { reviews } = reviewData
     const { users } = userData
 
-    console.log("seeding amenities")
     for (const amenity of amenities) {
         await prisma.amenity.upsert({
             where: {id: amenity.id},
@@ -25,7 +24,6 @@ async function main () {
         })
     }
 
-    console.log("seeding users")
     for (const user of users) {
         await prisma.user.upsert({
             where: {id: user.id},
@@ -48,7 +46,6 @@ async function main () {
         })
     }
 
-    console.log("seeding host")
     for (const host of hosts) {
         await prisma.host.upsert({
             where: {id: host.id},
@@ -69,7 +66,6 @@ async function main () {
         })
     }
     
-    console.log("seeding property")
     for (const property of properties) {
         await prisma.property.upsert({
             where: {id: property.id},
@@ -100,7 +96,6 @@ async function main () {
         })
     }
     
-    console.log("seeing Reviews")
     for (const review of reviews) {
         await prisma.review.upsert({
             where: {id: review.id},
@@ -119,7 +114,6 @@ async function main () {
         })
     }
 
-    console.log("seeding booking")
     for (const booking of bookings) {
         await prisma.booking.upsert({
             where: {id: booking.id},

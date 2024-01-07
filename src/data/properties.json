@@ -59,6 +59,30 @@
       "maxGuestCount": 6,
       "hostId": "b5678901-23ef-0123-4567-89abcdef0123",
       "rating": 4
+    },
+    {
+      "id": "z0123456-78ab-cdef-9012-3456789abcdef",
+      "title": "Country Farmhouse",
+      "description": "Step back in time and enjoy the simple pleasures of our traditional farmhouse.",
+      "location": "Nashville, Tennessee",
+      "pricePerNight": 85.0,
+      "bedroomCount": 3,
+      "bathRoomCount": 2,
+      "maxGuestCount": 6,
+      "hostId": "b5678901-23ef-0123-4567-89abcdef0123",
+      "rating": 4
+    },
+    {
+      "id": "z9876543-21fe-dcba-1098-76543210dcba",
+      "title": "Country Farmhouse",
+      "description": "Step back in time and enjoy the simple pleasures of our traditional farmhouse.",
+      "location": "Nashville, Tennessee",
+      "pricePerNight": 85.0,
+      "bedroomCount": 3,
+      "bathRoomCount": 2,
+      "maxGuestCount": 6,
+      "hostId": "b5678901-23ef-0123-4567-89abcdef0123",
+      "rating": 4
     }
   ]
 }

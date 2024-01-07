@@ -1,8 +1,14 @@
 import { PrismaClient } from "@prisma/client";
 
-const getAmenities = async () => {
+const getAmenities = async (listings) => {
   const prisma = new PrismaClient();
-  const amenities = await prisma.amenity.findMany();
+  const amenities = await prisma.amenity.findMany({
+    select: {
+      id: true,
+      name: true,
+      listings: listings ==='true'
+    }
+  });
 
   return amenities;
 };

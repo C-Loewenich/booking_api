@@ -1,6 +1,9 @@
 import { Router } from "express";
 
 import notFoundErrorHandler from '../middleware/notFoundErrorHandler.js'
+import auth from '../middleware/auth.js'
+import checkExistanceOfRequiredInput from "../middleware/checkExistanceOfRequiredInput.js";
+
 import getAmenities from "../services/amenities/getAmenities.js"
 import getAmenityById from "../services/amenities/getAmenityById.js";
 import createAmenity from "../services/amenities/createAmenity.js";
@@ -12,25 +15,26 @@ const router = Router();
 
 router.get("/", async (req, res, next) => {
     try {
-        const amenities = await getAmenities();
-        res.json(amenities);
+        const {listings} = req.query
+        const amenities = await getAmenities(listings);
+        res.status(200).json(amenities);
     } catch (error) {
         next(error)
     }
 });
 
 router.get("/:id", async (req, res, next) => {
-    //try {
+    try {
         const {id} = req.params;
-        const amenity = await getAmenityById(id);
+        const {listings} = req.query
+        const amenity = await getAmenityById(id, listings);
         res.status(200).json(amenity);
-        console.log("response received by router ", amenity)
-    //} catch (error) {
-    //    next(error)
-    //}
+    } catch (error) {
+        next(error)
+    }
 }, notFoundErrorHandler);
 
-router.post("/", async (req, res, next) => {
+router.post("/", auth, checkExistanceOfRequiredInput, async (req, res, next) => {
     try{
         const { name, listings } = req.body;
         const newAmenity = await createAmenity(name, listings);
@@ -40,7 +44,7 @@ router.post("/", async (req, res, next) => {
     }
 });
 
-router.put("/:id", async (req, res, next) => {
+router.put("/:id", auth, async (req, res, next) => {
     try{
         const {id} = req.params;
         const { name, listings } = req.body;
@@ -54,7 +58,7 @@ router.put("/:id", async (req, res, next) => {
     }
 }, notFoundErrorHandler);
 
-router.delete("/:id", async (req, res, next) => {
+router.delete("/:id", auth, async (req, res, next) => {
     try{
         const { id } = req.params;
         const amenity = await deleteAmenityById(id);
